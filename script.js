@@ -22,11 +22,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     mostrarProductos();
     actualizarCarrito();
     
-    // TODO: Agregar event listeners para los botones
-    // PISTA: checkoutBtn necesita un evento 'click' que llame a una función para procesar el pago
-    // PISTA: clearCartBtn necesita un evento 'click' que llame a mostrarModalVaciarCarrito()
-    // PISTA: loginBtn necesita un evento 'click' que llame a mostrarModalLogin()
-    // NOTA: Las funciones de modales ya están implementadas al final del archivo
+    checkoutBtn.addEventListener('click', procederPago);
+
+    clearCartBtn.addEventListener('click', mostrarModalVaciarCarrito);
+
+    loginBtn.addEventListener('click', mostrarModalLogin);
+
 });
 
 // Función para cargar productos desde JSON
@@ -75,6 +76,29 @@ function mostrarProductos() {
 
 // TODO: Función para agregar un producto al carrito
 function agregarAlCarrito(productoId) {
+
+    const product = productos.find(p => p.id === productoId) 
+
+    console.log(product);
+
+    const carritop = carrito.find(d => d.id === productoId)
+
+    if(carritop){
+        carritop.cantidad++
+        
+    }
+    else{
+        carrito.push(
+            {
+                ...product,
+                cantidad: 1
+            }
+        )
+    }
+    console.log(carritop)
+    
+    actualizarCarrito()
+    
     // PISTA: Necesitas buscar el producto en el array 'productos' usando el productoId
     // PISTA: Verifica si el producto ya existe en el carrito
     // PISTA: Si existe, incrementa la cantidad; si no existe, agrégalo con cantidad 1
@@ -84,6 +108,11 @@ function agregarAlCarrito(productoId) {
 
 // Función para actualizar la visualización del carrito
 function actualizarCarrito() {
+
+    const totalItems = carrito.reduce((total, item) => total + item.cantidad, 0)
+    cartCount.textContent = totalItems
+
+
     // TODO: Actualizar contador del carrito en el header
     // PISTA: Calcula el total de items sumando todas las cantidades
     // PISTA: Actualiza el textContent del elemento cartCount
@@ -100,9 +129,15 @@ function actualizarCarrito() {
     
     if (carrito.length === 0) {
         // TODO: Implementar lógica para carrito vacío
+        emptyCart.style.display = 'block';
+        cartContainer.style.display = 'none';
+
         return;
     }
     
+
+    emptyCart.style.display = 'none';
+        cartContainer.style.display = 'block';
     // TODO: Mostrar items del carrito
     // PISTA: Recorre el array carrito con forEach
     // PISTA: Para cada item, crea un div con clase 'cart-item'
@@ -137,6 +172,17 @@ function actualizarCarrito() {
 
 // TODO: Función para cambiar la cantidad de un producto
 function cambiarCantidad(productoId, cambio) {
+    const itemcart = carrito.find(d => d.id === productoId)
+
+    if(itemcart){
+        itemcart.cantidad += cambio;
+    }
+
+    if(itemcart.cantidad <= 0){
+        eliminarDelCarrito(itemcart.id);
+    }
+
+    actualizarCarrito();
     // PISTA: Busca el item en el carrito usando find()
     // PISTA: Suma el cambio a la cantidad actual
     // PISTA: Si la cantidad queda <= 0, elimina el producto del carrito
@@ -152,6 +198,13 @@ function actualizarCantidad(productoId, nuevaCantidad) {
 
 // TODO: Función para eliminar un producto del carrito
 function eliminarDelCarrito(productoId) {
+
+    let resultado = carrito.filter(item => item.id !== productoId)
+
+    carrito = resultado
+
+    actualizarCarrito();
+
     // PISTA: Usa filter() para crear un nuevo array sin el producto a eliminar
     // PISTA: Actualiza el array carrito con el resultado del filter
     // PISTA: Llama a actualizarCarrito()

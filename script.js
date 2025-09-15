@@ -230,6 +230,8 @@ function procederPago() {
 
 // TODO: Función para vaciar todo el carrito
 function vaciarCarrito() {
+    carrito = [];
+    actualizarCarrito();
     // PISTA: Asigna un array vacío a la variable carrito
     // PISTA: Llama a actualizarCarrito() para refrescar la vista
 }

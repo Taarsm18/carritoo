@@ -4,6 +4,8 @@ let productos = [];
 // Array del carrito de compras
 let carrito = [];
 
+const base = 'https://xp8qpg8w-3000.brs.devtunnels.ms/auth/register'
+
 // Referencias a elementos del DOM
 const productosContainer = document.getElementById('products-container');
 const cartSection = document.getElementById('cart-section');
@@ -433,9 +435,27 @@ function mostrarModalLogin() {
     mostrarModal({
         icono: '👤',
         titulo: 'Iniciar Sesión',
-        mensaje: 'Funcionalidad de login en desarrollo.\n\nPronto podrás:\n• Guardar tu carrito\n• Ver historial de compras\n• Gestionar tus datos\n• Recibir ofertas exclusivas',
-        textoConfirmar: 'Entendido',
+        mensaje: '<form method="post" id="formulario"><input type="text" name="1" id="EMAIL" placeholder="Ingrese su nombre de usuario"> <br><input type="password" name="2" id="password" placeholder="Ingrese su contraseña"></form> <br> <button type="button" onclick()>Registrarse</button>',
+        textoConfirmar: 'Login',
         textoCancel: '',
-        onConfirmar: null
+        onConfirmar: () => {
+            const formu = document.getElementById('formulario');
+            const email = formu.elements[0].value;
+            const password = formu.elements[1].value;
+            login({email, password});
+            
+        }
     });
+}
+
+async function login(data = { email, password }) {
+    
+    const response = await fetch ('https://xp8qpg8w-3000.brs.devtunnels.ms/auth/Login' , {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    return response.json();
 }

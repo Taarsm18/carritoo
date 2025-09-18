@@ -293,6 +293,12 @@ function mostrarFallbackCarrito(imgElement, fallback) {
 
 // Función para crear y mostrar modal personalizado
 function mostrarModal({ icono, titulo, mensaje, textoConfirmar, textoCancel, onConfirmar }) {
+
+    const existingOverlay = document.querySelector('.modal-overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+
     // Crear overlay
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay';
@@ -435,22 +441,56 @@ function mostrarModalLogin() {
     mostrarModal({
         icono: '👤',
         titulo: 'Iniciar Sesión',
-        mensaje: '<form method="post" id="formulario"><input type="text" name="1" id="EMAIL" placeholder="Ingrese su nombre de usuario"> <br><input type="password" name="2" id="password" placeholder="Ingrese su contraseña"></form> <br> <button type="button" onclick()>Registrarse</button>',
+        mensaje: '<form method="post" id="formulariologin"><input type="text" id="EMAIL" placeholder="Ingrese su Email"> <br> <input type="password" id="password" placeholder="Ingrese su contraseña"></form> <br> ¿no tienes cuenta? <a href="#" onclick = regis()>Registrarse</a>',
         textoConfirmar: 'Login',
-        textoCancel: '',
+        textoCancel: 'Cancelar',
         onConfirmar: () => {
             const formu = document.getElementById('formulario');
             const email = formu.elements[0].value;
             const password = formu.elements[1].value;
             login({email, password});
             
-        }
+        }, 
+        
     });
+
+}
+
+function regis(){
+
+    mostrarModal(
+        {
+            icono: '👤',
+            titulo: 'Iniciar Sesión',
+            mensaje: '<form method="post" id="formularioregister"><input type="text" id="name" placeholder="Ingrese su nombre de usuario"> <br> <input type="text" id="email" placeholder="Ingrese su email"> <br> <input type="password" id="password" placeholder="Escriba una contraseña"></form> <br> ¿tienes cuenta? <a href="#" onclick= mostrarModalLogin()>Inicia Sesion</a>',
+            textoConfirmar: 'Registrarse',
+            textoCancel: 'Cancelar',
+            onConfirmar: () => {
+                const form = document.getElementById('formularioregister')
+                const username = form.elements[0].value;
+                const email = form.elements[1].value;
+                const password = form.elements[2].value;
+                register({username, email, password});
+            },
+            
+        });
 }
 
 async function login(data = { email, password }) {
     
     const response = await fetch ('https://xp8qpg8w-3000.brs.devtunnels.ms/auth/Login' , {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    return response.json();
+}
+
+async function register(data = { username, email, password }) {
+    
+    const response = await fetch ('https://xp8qpg8w-3000.brs.devtunnels.ms/auth/register' , {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
